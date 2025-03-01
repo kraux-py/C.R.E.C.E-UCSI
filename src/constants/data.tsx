@@ -40,36 +40,7 @@ export const EVENTS = [
 ];
 
 export const PROPOSALS = [
-  {
-    icon: <Award className="h-6 w-6" />,
-    title: "Más Becas y Apoyo Financiero",
-    description:
-      "Implementaremos un sistema de becas más inclusivo que permita a más estudiantes acceder a oportunidades educativas sin preocuparse por las limitaciones financieras.",
-  },
-  {
-    icon: <Library className="h-6 w-6" />,
-    title: "Mejores Espacios de Estudio",
-    description:
-      "Renovaremos y ampliaremos las áreas de estudio en el campus, con tecnología moderna, mejores muebles y espacios diseñados para el trabajo colaborativo e individual.",
-  },
-  {
-    icon: <Coffee className="h-6 w-6" />,
-    title: "Bienestar Estudiantil",
-    description:
-      "Crearemos nuevos programas de bienestar que incluyen apoyo psicológico, actividades recreativas y espacios de descanso para promover una vida universitaria equilibrada.",
-  },
-  {
-    icon: <Users className="h-6 w-6" />,
-    title: "Representación Estudiantil Efectiva",
-    description:
-      "Fortaleceremos los canales de comunicación entre estudiantes y administración, asegurando que la voz estudiantil sea escuchada en todas las decisiones importantes.",
-  },
-  {
-    icon: <BookOpen className="h-6 w-6" />,
-    title: "Innovación Académica",
-    description:
-      "Trabajaremos para actualizar los planes de estudio, incorporar nuevas tecnologías en el aprendizaje y fomentar métodos pedagógicos innovadores en todas las carreras.",
-  },
+  
 ];
 
 // TODO: usar luego

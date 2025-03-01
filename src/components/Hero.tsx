@@ -17,7 +17,7 @@ const Hero = () => {
       className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16"
       style={{
         background:
-          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.imgur.com/6MQnR17.jpeg') no-repeat center center",
+          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.imgur.com/PJbh9Qc.jpeg') no-repeat center center",
         backgroundSize: "cover", // Cambiado a "cover" para mejor adaptación en móviles
         backgroundPosition: "center", // Asegura que la imagen esté centrada
         minHeight: "90vh",
