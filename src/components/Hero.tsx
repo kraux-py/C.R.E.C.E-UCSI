@@ -1,16 +1,7 @@
+import { scrollToSection } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 
 const Hero = () => {
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      const yOffset = -80;
-      const y =
-        section.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-  };
-
   return (
     <section
       id="inicio"
