@@ -1,3 +1,4 @@
+import { scrollToSection } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 
 const Hero = () => {

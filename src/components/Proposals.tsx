@@ -1,45 +1,7 @@
 import { PROPOSALS } from "@/constants/data";
+import useIntersectionObserver from "@/hooks/use-intersection-observer";
+import { scrollToSection } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
-
-const useIntersectionObserver = (options = {}) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.1, ...options }
-    );
-
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [options]);
-
-  return { ref, isVisible };
-};
-
-const scrollToSection = (sectionId: string) => {
-  const section = document.getElementById(sectionId);
-  if (section) {
-    const yOffset = -80;
-    const y =
-      section.getBoundingClientRect().top + window.pageYOffset + yOffset;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }
-};
 
 interface ProposalProps {
   icon: React.ReactNode;
