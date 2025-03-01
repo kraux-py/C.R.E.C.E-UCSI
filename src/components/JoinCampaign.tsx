@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Instagram, Phone } from "lucide-react";
 import { useToast } from "../hooks/use-toast";
 import useIntersectionObserver from "@/hooks/use-intersection-observer";
-import { sendEmail } from "../lib/email";
+import { sendEmailToOwner, sendEmailToUser } from "../lib/email"; // Importa ambas funciones
 
 interface FormFieldProps {
   id: string;
   label: string;
   type?: string;
-  value: string | number;
+  value: string | number | boolean;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -40,7 +40,7 @@ export const FormField: React.FC<FormFieldProps> = ({
     {type === "textarea" ? (
       <textarea
         id={id}
-        value={value}
+        value={value as string}
         onChange={onChange}
         rows={rows}
         className={inputClassName}
@@ -51,7 +51,7 @@ export const FormField: React.FC<FormFieldProps> = ({
       <input
         type={type}
         id={id}
-        value={value}
+        value={value as string}
         onChange={onChange}
         required={required}
         className={inputClassName}
@@ -74,6 +74,7 @@ const JoinCampaign = () => {
     isNewsletterChecked: true,
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el envío
   const { toast } = useToast();
   const { ref: sectionRef, isVisible } = useIntersectionObserver();
 
@@ -84,18 +85,25 @@ const JoinCampaign = () => {
       [id]: type === "checkbox" ? checked : value,
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    setIsSubmitting(true); // Deshabilitar el botón de envío
+
     try {
-      const emailResponse = await sendEmail(formData);
-      
-      if (emailResponse.success) {
+      // Enviar correo al administrador
+      const ownerResponse = await sendEmailToOwner(formData);
+
+      // Enviar correo de confirmación al usuario
+      const userResponse = await sendEmailToUser(formData);
+
+      if (ownerResponse.success && userResponse.success) {
         toast({
           title: "¡Gracias por tu apoyo!",
           description: "Hemos recibido tu información y pronto nos pondremos en contacto contigo.",
         });
-  
+
+        // Reiniciar el formulario
         setFormData({
           name: "",
           lastName: "",
@@ -121,8 +129,11 @@ const JoinCampaign = () => {
         description: "Hubo un problema al enviar tu información. Por favor, intenta nuevamente.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false); // Rehabilitar el botón de envío
     }
   };
+
   return (
     <section
       id="unete"
@@ -156,7 +167,7 @@ const JoinCampaign = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Siguienos en nuestro Instagram
+                  Síguenos en nuestro Instagram
                 </a>
               </div>
               <div className="flex space-x-4 mt-6 text-white hover:text-campaign-300 transition-colors">
@@ -192,7 +203,6 @@ const JoinCampaign = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required={true}
-                    rows={4}
                     placeholder="Tu nombre"
                   />
                   <FormField
@@ -201,7 +211,6 @@ const JoinCampaign = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     required={true}
-                    rows={4}
                     placeholder="Tu apellido"
                   />
                 </div>
@@ -213,7 +222,6 @@ const JoinCampaign = () => {
                     value={formData.career}
                     onChange={handleChange}
                     required={true}
-                    rows={4}
                     placeholder="Tu carrera"
                   />
                   <FormField
@@ -222,8 +230,7 @@ const JoinCampaign = () => {
                     value={formData.year}
                     onChange={handleChange}
                     required={true}
-                    rows={4}
-                    placeholder="El año que estas cursando"
+                    placeholder="El año que estás cursando"
                   />
                 </div>
 
@@ -234,7 +241,6 @@ const JoinCampaign = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required={true}
-                  rows={4}
                   placeholder="tu@email.com"
                 />
 
@@ -244,7 +250,6 @@ const JoinCampaign = () => {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  rows={4}
                   placeholder="Tu número de teléfono"
                 />
 
@@ -277,8 +282,9 @@ const JoinCampaign = () => {
                 <button
                   type="submit"
                   className="w-full bg-white hover:bg-campaign-600 text-black hover:text-white font-semibold py-3 px-4 rounded-md shadow-md transition-all duration-300 transform hover:scale-[1.02] focus:outline-none"
+                  disabled={isSubmitting} // Deshabilitar el botón mientras se envía
                 >
-                  ¡Únete ahora!
+                  {isSubmitting ? "Enviando..." : "¡Únete ahora!"}
                 </button>
               </form>
             </div>
