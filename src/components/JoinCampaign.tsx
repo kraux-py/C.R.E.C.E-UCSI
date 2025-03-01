@@ -1,8 +1,15 @@
-import { useState } from "react";
-import { Instagram, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Instagram, Phone, Check } from "lucide-react";
 import { useToast } from "../hooks/use-toast";
 import useIntersectionObserver from "@/hooks/use-intersection-observer";
-import { sendEmailToOwner, sendEmailToUser } from "../lib/email"; // Importa ambas funciones
+import { sendEmailToOwner, sendEmailToUser } from "../lib/email";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface FormFieldProps {
   id: string;
@@ -62,6 +69,16 @@ export const FormField: React.FC<FormFieldProps> = ({
 );
 
 const JoinCampaign = () => {
+  const careers = [
+    "Nutrición",
+    "Enfermería",
+    "Marketing",
+    "Comercio Internacional",
+    "Administración de Empresas",
+    "Contador Público Nacional",
+    "Ingeniería Informática",
+  ];
+
   const [formData, setFormData] = useState({
     name: "",
     lastName: "",
@@ -71,12 +88,32 @@ const JoinCampaign = () => {
     phone: "",
     message: "",
     isVolunteer: false,
-    isNewsletterChecked: true,
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el envío
+  const [availableYears, setAvailableYears] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { ref: sectionRef, isVisible } = useIntersectionObserver();
+
+  useEffect(() => {
+    if (!formData.career) {
+      setAvailableYears([]);
+      return;
+    }
+
+    const years = ["Admisión"];
+    const maxYear = formData.career === "Ingeniería Informática" ? 5 : 4;
+
+    for (let i = 1; i <= maxYear; i++) {
+      years.push(`${i}° Año`);
+    }
+
+    setAvailableYears(years);
+
+    if (formData.year && !years.includes(formData.year)) {
+      setFormData((prev) => ({ ...prev, year: "" }));
+    }
+  }, [formData.career, formData.year]);
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -86,24 +123,28 @@ const JoinCampaign = () => {
     }));
   };
 
+  const handleSelectChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true); // Deshabilitar el botón de envío
+    setIsSubmitting(true);
 
     try {
-      // Enviar correo al administrador
       const ownerResponse = await sendEmailToOwner(formData);
-
-      // Enviar correo de confirmación al usuario
       const userResponse = await sendEmailToUser(formData);
 
       if (ownerResponse.success && userResponse.success) {
         toast({
           title: "¡Gracias por tu apoyo!",
-          description: "Hemos recibido tu información y pronto nos pondremos en contacto contigo.",
+          description:
+            "Hemos recibido tu información y pronto nos pondremos en contacto contigo.",
         });
 
-        // Reiniciar el formulario
         setFormData({
           name: "",
           lastName: "",
@@ -113,12 +154,12 @@ const JoinCampaign = () => {
           phone: "",
           message: "",
           isVolunteer: false,
-          isNewsletterChecked: true,
         });
       } else {
         toast({
           title: "Error",
-          description: "Hubo un problema al enviar tu información. Por favor, intenta nuevamente.",
+          description:
+            "Hubo un problema al enviar tu información. Por favor, intenta nuevamente.",
           variant: "destructive",
         });
       }
@@ -126,11 +167,12 @@ const JoinCampaign = () => {
       console.error("Error al enviar el formulario:", error);
       toast({
         title: "Error",
-        description: "Hubo un problema al enviar tu información. Por favor, intenta nuevamente.",
+        description:
+          "Hubo un problema al enviar tu información. Por favor, intenta nuevamente.",
         variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false); // Rehabilitar el botón de envío
+      setIsSubmitting(false);
     }
   };
 
@@ -196,7 +238,7 @@ const JoinCampaign = () => {
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex gap-16">
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     id="name"
                     label="Nombre"
@@ -204,6 +246,7 @@ const JoinCampaign = () => {
                     onChange={handleChange}
                     required={true}
                     placeholder="Tu nombre"
+                    className="col-span-1"
                   />
                   <FormField
                     id="lastName"
@@ -212,26 +255,63 @@ const JoinCampaign = () => {
                     onChange={handleChange}
                     required={true}
                     placeholder="Tu apellido"
+                    className="col-span-1"
                   />
                 </div>
 
-                <div className="flex gap-16">
-                  <FormField
-                    id="career"
-                    label="Carrera"
-                    value={formData.career}
-                    onChange={handleChange}
-                    required={true}
-                    placeholder="Tu carrera"
-                  />
-                  <FormField
-                    id="year"
-                    label="Año"
-                    value={formData.year}
-                    onChange={handleChange}
-                    required={true}
-                    placeholder="El año que estás cursando"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-1">
+                    <label
+                      htmlFor="career"
+                      className="block text-sm font-medium text-white mb-1"
+                    >
+                      Carrera
+                    </label>
+                    <Select
+                      value={formData.career}
+                      onValueChange={(value) =>
+                        handleSelectChange("career", value)
+                      }
+                    >
+                      <SelectTrigger className="w-full h-12 px-4 py-3 rounded-md bg-neutral-800 border border-neutral-700 text-white focus:outline-none focus:ring-2 focus:ring-campaign-500 focus:border-transparent">
+                        <SelectValue placeholder="Selecciona tu carrera" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-neutral-800 border border-neutral-700 text-white">
+                        {careers.map((career) => (
+                          <SelectItem key={career} value={career}>
+                            {career}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="col-span-1">
+                    <label
+                      htmlFor="year"
+                      className="block text-sm font-medium text-white mb-1"
+                    >
+                      Año
+                    </label>
+                    <Select
+                      value={formData.year}
+                      onValueChange={(value) =>
+                        handleSelectChange("year", value)
+                      }
+                      disabled={!formData.career || availableYears.length === 0}
+                    >
+                      <SelectTrigger className="w-full h-12 px-4 py-3 rounded-md bg-neutral-800 border border-neutral-700 text-white focus:outline-none focus:ring-2 focus:ring-campaign-500 focus:border-transparent">
+                        <SelectValue placeholder="Selecciona tu año" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-neutral-800 border border-neutral-700 text-white">
+                        {availableYears.map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <FormField
@@ -282,7 +362,7 @@ const JoinCampaign = () => {
                 <button
                   type="submit"
                   className="w-full bg-white hover:bg-campaign-600 text-black hover:text-white font-semibold py-3 px-4 rounded-md shadow-md transition-all duration-300 transform hover:scale-[1.02] focus:outline-none"
-                  disabled={isSubmitting} // Deshabilitar el botón mientras se envía
+                  disabled={isSubmitting}
                 >
                   {isSubmitting ? "Enviando..." : "¡Únete ahora!"}
                 </button>
