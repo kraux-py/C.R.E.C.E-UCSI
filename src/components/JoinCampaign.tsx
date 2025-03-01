@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Instagram, Phone } from "lucide-react";
 import { useToast } from "../hooks/use-toast";
 import useIntersectionObserver from "@/hooks/use-intersection-observer";
+import { sendEmail } from "../lib/email";
 
 interface FormFieldProps {
   id: string;
@@ -83,31 +84,45 @@ const JoinCampaign = () => {
       [id]: type === "checkbox" ? checked : value,
     }));
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(formData);
-
-    toast({
-      title: "¡Gracias por tu apoyo!",
-      description:
-        "Hemos recibido tu información y pronto nos pondremos en contacto contigo.",
-    });
-
-    setFormData({
-      name: "",
-      lastName: "",
-      career: "",
-      year: "",
-      email: "",
-      phone: "",
-      message: "",
-      isVolunteer: false,
-      isNewsletterChecked: true,
-    });
+  
+    try {
+      const emailResponse = await sendEmail(formData);
+      
+      if (emailResponse.success) {
+        toast({
+          title: "¡Gracias por tu apoyo!",
+          description: "Hemos recibido tu información y pronto nos pondremos en contacto contigo.",
+        });
+  
+        setFormData({
+          name: "",
+          lastName: "",
+          career: "",
+          year: "",
+          email: "",
+          phone: "",
+          message: "",
+          isVolunteer: false,
+          isNewsletterChecked: true,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Hubo un problema al enviar tu información. Por favor, intenta nuevamente.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+      toast({
+        title: "Error",
+        description: "Hubo un problema al enviar tu información. Por favor, intenta nuevamente.",
+        variant: "destructive",
+      });
+    }
   };
-
   return (
     <section
       id="unete"
