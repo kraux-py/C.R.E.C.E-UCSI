@@ -12,14 +12,14 @@ const USER_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_USER_TEMPLATE_ID;
 export const sendEmailToOwner = async (formData) => {
   try {
     const templateParams = {
-      from_name: `${formData.name} ${formData.lastName}`,
+      from_name: `${formData.name} ${formData.lastName}`, // Nombre del usuario
       career: formData.career,
       year: formData.year,
       email: formData.email,
       phone: formData.phone || 'No proporcionado',
       message: formData.message,
       is_volunteer: formData.isVolunteer ? 'Sí' : 'No',
-      to_name: 'Administrador de C.R.E.C.E',
+      to_name: 'Administrador de C.R.E.C.E', // Nombre del administrador
     };
 
     const response = await emailjs.send(
@@ -47,8 +47,8 @@ export const sendEmailToOwner = async (formData) => {
 export const sendEmailToUser = async (formData) => {
   try {
     const templateParams = {
-      to_name: `${formData.name} ${formData.lastName}`,
-      email: formData.email,
+      to_name: `${formData.name} ${formData.lastName}`, // Nombre del usuario
+      to_email: formData.email, // Correo del usuario
       message: 'Gracias por contactarnos. Hemos recibido tu mensaje.',
     };
 
