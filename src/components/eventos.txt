@@ -1,0 +1,32 @@
+{
+    id: 1,
+    title: "Debate Presidencial",
+    date: "15 de Mayo, 2023",
+    time: "14:00 - 16:00",
+    location: "Auditorio Principal",
+    description: "Participa en el debate donde presentaré mis propuestas y responderé preguntas de los estudiantes."
+  },
+  {
+    id: 2,
+    title: "Café con Candidatos",
+    date: "18 de Mayo, 2023",
+    time: "10:00 - 12:00",
+    location: "Cafetería Central",
+    description: "Una reunión informal para conversar sobre las preocupaciones y sugerencias de los estudiantes."
+  },
+  {
+    id: 3,
+    title: "Presentación de Plan de Gobierno",
+    date: "22 de Mayo, 2023",
+    time: "13:00 - 15:00",
+    location: "Sala de Conferencias B",
+    description: "Presentación detallada de mi plan de gobierno y propuestas específicas para cada facultad."
+  },
+  {
+    id: 4,
+    title: "Día de las Elecciones",
+    date: "29 de Mayo, 2023",
+    time: "08:00 - 18:00",
+    location: "Pabellones de cada facultad",
+    description: "¡El gran día! No olvides llevar tu credencial universitaria y ejercer tu derecho al voto."
+  }
